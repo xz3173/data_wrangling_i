@@ -7,6 +7,8 @@ output: github_document
 
 ```{r}
 library(tidyverse)
+library(readxl)
+library(haven)
 ```
 
 
@@ -55,4 +57,85 @@ Look at a data summary
 str(litters_df)
 
 skimr::skim(litters_df)
+```
+
+## Options in read_*
+
+
+```{r}
+litters_df = 
+  read_csv(
+    "data/FAS_litters.csv",
+    skip = 10, col_names = FALSE)
+```
+
+Look at NA values.
+
+
+
+```{r}
+litters_df = 
+  read_csv(
+    "data/FAS_litters.csv",
+    na = c("NA", 19, "."))
+```
+
+
+Column types
+
+```{r}
+litters_df = 
+  read_csv(
+    "data/FAS_litters.csv",
+    col_types = 
+      cols(
+        Group = col_character(),
+        `GD0 weight` = col_double()
+      ))
+```
+
+
+## Other file types
+
+Import a xlsx file first.
+
+
+```{r}
+mlb_df =
+  read_excel("data/mlb11.xlsx")
+```
+
+Import a SAS file
+
+```{r}
+pulse_df = 
+  read_sas("data/public_pulse_data.sas7bdat")
+```
+
+
+## Base R ...
+
+dont't do this
+
+```{r, eval = FALSE}
+litters_df =
+  read.csv("data/FAS_litters.csv")
+
+litters_df$Gr
+```
+
+## Export data
+
+We have code that "cleans" 
+
+```{r}
+litters_df_cleaned = 
+  read_csv("data/FAS_litters.csv")
+
+litters_df_cleaned = 
+  janitor::clean_names(litters_df_cleaned)
+
+litters_df_cleaned
+
+write_csv(litters_df_cleaned, "data/litters_cleaned.csv")
 ```
