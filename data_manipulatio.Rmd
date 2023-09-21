@@ -1,5 +1,5 @@
 ---
-title: "Data_Wrangling_Practice"
+title: "data_manipulation"
 Author: "Xue Zhang"
 Date: "2023-09-19"
 output: github_document
@@ -9,8 +9,6 @@ output: github_document
 
 ```{r}
 library(tidyverse)
-library(readxl)
-library(haven)
 ```
 
 
@@ -22,187 +20,119 @@ Let's import the FAS_litters.csv` csv using a relative path.
 litters_df = 
   read_csv("data/FAS_litters.csv")
 
-names(litters_df)
-
 litters_df = 
   janitor::clean_names(litters_df)
 
-names(litters_df)
-```
-
-Import the Pups datset
-
-```{r}
 pups_df = 
   read_csv("data/FAS_pups.csv")
 
-names(pups_df)
-
 pups_df = 
   janitor::clean_names(pups_df)
-
-names(pups_df)
 ```
-
-
-## Look at data
-
-```{r}
-litters_df
-
-head(litters_df)
-
-tail(litters_df)
-```
-
-You can use `view`
-
-```{r, eval = FALSE}
-view(litters_df)
-```
-
-Look at a data summary
-
-```{r}
-str(litters_df)
-
-skimr::skim(litters_df)
-```
-
-## Options in read_*
 
 
 ```{r}
-litters_df = 
-  read_csv(
-    "data/FAS_litters.csv",
-    skip = 10, col_names = FALSE)
+select(litters_df, group, litter_number, gd0_weight)
 
-head(litters_df)
-```
+select(litters_df, gd0_weight, group)
 
-Look at NA values.
+select(litters_df, group, gd0_weight:gd_of_birth)
 
+select(litters_df, group, starts_with("pups"))
 
+select(litters_df, -litter_number)
 
-```{r}
-litters_df = 
-  read_csv(
-    "data/FAS_litters.csv",
-    na = c("NA", 19, "."))
-```
+select(litters_df, -starts_with("gd"))
 
+select(litters_df, group, litter_id = litter_number)
 
-Column types
+select(litters_df, group, litter_id = litter_number, everything())
 
-```{r}
-litters_df = 
-  read_csv(
-    "data/FAS_litters.csv",
-    col_types = 
-      cols(
-        Group = col_character(),
-        `Litter Number` = col_character(),
-        `GD0 weight` = col_double(),
-        `GD18 weight` = col_double(),
-        `GD of Birth` = col_integer(),
-        `Pups born alive` = col_integer(),
-        `Pups dead @ birth` = col_integer(),
-        `Pups survive` = col_integer()
-      ))
-
-tail(litters_df)
+select(litters_df, gd0_weight, everything())
 ```
 
 ```{r}
-litters_df = 
-  read_csv(
-    "data/FAS_litters.csv",
-    col_types = cols(
-      Group = col_factor()
-    )
-  )
+rename(litters_df, litter_id = litter_number)
 
-head(litters_df)
+relocate(litters_df, litter_number)
 ```
 
-Practice with pups_csv
+`rename` is a short hand 
+
+
+`select` s `pull`
 
 ```{r}
-pups_df = 
-  read_csv(
-    "data/FAS_pups.csv",
-    col_types = cols(
-      Group = col_character(),
-      `Litter Number` = col_character(),
-      `Sex` = col_integer(),
-      `PD ears` = col_double(),
-      `PD eyes` = col_double(),
-      `PD pivot` = col_double(),
-      `PD walk` = col_double()
-    )
+select(litters_df, group)
+
+pull(litters_df, group)
+```
+
+If need something to get off from the data frame , use `pull`.
+
+
+pracftice with pups.csv.
+
+```{r}
+select(pups_df, litter_number, sex, pd_ears)
+```
+
+## `filter`
+
+get rid of rows using `filter()`
+
+filter something exist inside the data frame
+
+== to check this thing if turns out to be true
+
+```{r}
+filter(litters_df, group == "Con7")
+
+filter(litters_df, group == "Mod8")
+
+filter(litters_df, group != "Con7")
+
+filter(litters_df, gd0_weight > 20)
+
+filter(litters_df, gd0_weight <= 20)
+
+filter(litters_df, group == "Con7" | group == "Con8")
+
+filter(litters_df, group %in% c("Con7", "Con8"))
+
+filter(litters_df, !(group == "Con7"))
+
+filter(litters_df, group %in% c("Con7", "Con8"), gd0_weight > 20 )
+```
+
+what about missing rows
+
+drop missing values, "NA"
+
+```{r}
+drop_na(litters_df)
+drop_na(litters_df, gd0_weight)
+```
+
+
+## `mutate`
+
+this is used to add or change variables
+
+```{r}
+mutate(litters_df, wt_gain = gd18_weight - gd0_weight)
+
+mutate(litters_df, group = str_to_lower(group))
+
+mutate(
+  litters_df,
+  wt_gain = gd18_weight - gd0_weight,
+  group = str_to_lower(group)
 )
-
-tail(pups_df)
-```
-
-```{r}
-pups_df = 
-  read_csv(
-    "data/FAS_pups.csv",
-    col_types = cols(
-      Group = col_factor()
-    )
-  )
-
-head(pups_df)
-```
-
-## Other file types
-
-Import a xlsx file first.
-
-
-```{r}
-mlb_df =
-  read_excel("data/mlb11.xlsx", n_max = 20)
-
-head(mlb_df, 5)
-```
-
-Import a SAS file
-
-```{r}
-pulse_df = 
-  read_sas("data/public_pulse_data.sas7bdat")
-
-head(pulse_df, 5)
 ```
 
 
-## Base R ...
 
-dont't do this
 
-```{r, eval = FALSE}
-litters_df =
-  read.csv("data/FAS_litters.csv")
 
-litters_df$Gr
-```
 
-## Export data
-
-We have code that "cleans" 
-
-```{r}
-litters_df_cleaned = 
-  read_csv("data/FAS_litters.csv")
-
-litters_df_cleaned = 
-  janitor::clean_names(litters_df_cleaned)
-
-litters_df_cleaned
-
-write_csv(litters_df_cleaned, "data/litters_cleaned.csv")
-```
