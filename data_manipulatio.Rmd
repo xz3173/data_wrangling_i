@@ -1,0 +1,208 @@
+---
+title: "Data_Wrangling_Practice"
+Author: "Xue Zhang"
+Date: "2023-09-19"
+output: github_document
+---
+
+
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(haven)
+```
+
+
+Let's import the FAS_litters.csv` csv using a relative path.
+
+
+
+```{r}
+litters_df = 
+  read_csv("data/FAS_litters.csv")
+
+names(litters_df)
+
+litters_df = 
+  janitor::clean_names(litters_df)
+
+names(litters_df)
+```
+
+Import the Pups datset
+
+```{r}
+pups_df = 
+  read_csv("data/FAS_pups.csv")
+
+names(pups_df)
+
+pups_df = 
+  janitor::clean_names(pups_df)
+
+names(pups_df)
+```
+
+
+## Look at data
+
+```{r}
+litters_df
+
+head(litters_df)
+
+tail(litters_df)
+```
+
+You can use `view`
+
+```{r, eval = FALSE}
+view(litters_df)
+```
+
+Look at a data summary
+
+```{r}
+str(litters_df)
+
+skimr::skim(litters_df)
+```
+
+## Options in read_*
+
+
+```{r}
+litters_df = 
+  read_csv(
+    "data/FAS_litters.csv",
+    skip = 10, col_names = FALSE)
+
+head(litters_df)
+```
+
+Look at NA values.
+
+
+
+```{r}
+litters_df = 
+  read_csv(
+    "data/FAS_litters.csv",
+    na = c("NA", 19, "."))
+```
+
+
+Column types
+
+```{r}
+litters_df = 
+  read_csv(
+    "data/FAS_litters.csv",
+    col_types = 
+      cols(
+        Group = col_character(),
+        `Litter Number` = col_character(),
+        `GD0 weight` = col_double(),
+        `GD18 weight` = col_double(),
+        `GD of Birth` = col_integer(),
+        `Pups born alive` = col_integer(),
+        `Pups dead @ birth` = col_integer(),
+        `Pups survive` = col_integer()
+      ))
+
+tail(litters_df)
+```
+
+```{r}
+litters_df = 
+  read_csv(
+    "data/FAS_litters.csv",
+    col_types = cols(
+      Group = col_factor()
+    )
+  )
+
+head(litters_df)
+```
+
+Practice with pups_csv
+
+```{r}
+pups_df = 
+  read_csv(
+    "data/FAS_pups.csv",
+    col_types = cols(
+      Group = col_character(),
+      `Litter Number` = col_character(),
+      `Sex` = col_integer(),
+      `PD ears` = col_double(),
+      `PD eyes` = col_double(),
+      `PD pivot` = col_double(),
+      `PD walk` = col_double()
+    )
+)
+
+tail(pups_df)
+```
+
+```{r}
+pups_df = 
+  read_csv(
+    "data/FAS_pups.csv",
+    col_types = cols(
+      Group = col_factor()
+    )
+  )
+
+head(pups_df)
+```
+
+## Other file types
+
+Import a xlsx file first.
+
+
+```{r}
+mlb_df =
+  read_excel("data/mlb11.xlsx", n_max = 20)
+
+head(mlb_df, 5)
+```
+
+Import a SAS file
+
+```{r}
+pulse_df = 
+  read_sas("data/public_pulse_data.sas7bdat")
+
+head(pulse_df, 5)
+```
+
+
+## Base R ...
+
+dont't do this
+
+```{r, eval = FALSE}
+litters_df =
+  read.csv("data/FAS_litters.csv")
+
+litters_df$Gr
+```
+
+## Export data
+
+We have code that "cleans" 
+
+```{r}
+litters_df_cleaned = 
+  read_csv("data/FAS_litters.csv")
+
+litters_df_cleaned = 
+  janitor::clean_names(litters_df_cleaned)
+
+litters_df_cleaned
+
+write_csv(litters_df_cleaned, "data/litters_cleaned.csv")
+```
