@@ -1,4 +1,4 @@
-Simple document
+Data_Wrangling_Practice
 ================
 
 ``` r
@@ -38,9 +38,22 @@ litters_df =
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 
 ``` r
+names(litters_df)
+```
+
+    ## [1] "Group"             "Litter Number"     "GD0 weight"       
+    ## [4] "GD18 weight"       "GD of Birth"       "Pups born alive"  
+    ## [7] "Pups dead @ birth" "Pups survive"
+
+``` r
 litters_df = 
   janitor::clean_names(litters_df)
+
+names(litters_df)
 ```
+
+    ## [1] "group"           "litter_number"   "gd0_weight"      "gd18_weight"    
+    ## [5] "gd_of_birth"     "pups_born_alive" "pups_dead_birth" "pups_survive"
 
 Import the Pups datset
 
@@ -59,9 +72,21 @@ pups_df =
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 
 ``` r
+names(pups_df)
+```
+
+    ## [1] "Litter Number" "Sex"           "PD ears"       "PD eyes"      
+    ## [5] "PD pivot"      "PD walk"
+
+``` r
 pups_df = 
   janitor::clean_names(pups_df)
+
+names(pups_df)
 ```
+
+    ## [1] "litter_number" "sex"           "pd_ears"       "pd_eyes"      
+    ## [5] "pd_pivot"      "pd_walk"
 
 ## Look at data
 
@@ -203,6 +228,20 @@ litters_df =
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 
+``` r
+head(litters_df)
+```
+
+    ## # A tibble: 6 × 8
+    ##   X1    X2                 X3    X4    X5    X6    X7    X8
+    ##   <chr> <chr>           <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+    ## 1 Con8  #3/5/2/2/95      28.5    NA    20     8     0     8
+    ## 2 Con8  #5/4/3/83/3      28      NA    19     9     0     8
+    ## 3 Con8  #1/6/2/2/95-2    NA      NA    20     7     0     6
+    ## 4 Con8  #3/5/3/83/3-3-2  NA      NA    20     8     0     8
+    ## 5 Con8  #2/2/95/2        NA      NA    19     5     0     4
+    ## 6 Con8  #3/6/2/2/95-3    NA      NA    20     7     0     7
+
 Look at NA values.
 
 ``` r
@@ -230,9 +269,113 @@ litters_df =
     col_types = 
       cols(
         Group = col_character(),
-        `GD0 weight` = col_double()
+        `Litter Number` = col_character(),
+        `GD0 weight` = col_double(),
+        `GD18 weight` = col_double(),
+        `GD of Birth` = col_integer(),
+        `Pups born alive` = col_integer(),
+        `Pups dead @ birth` = col_integer(),
+        `Pups survive` = col_integer()
       ))
+
+tail(litters_df)
 ```
+
+    ## # A tibble: 6 × 8
+    ##   Group `Litter Number` `GD0 weight` `GD18 weight` `GD of Birth`
+    ##   <chr> <chr>                  <dbl>         <dbl>         <int>
+    ## 1 Low8  #79                     25.4          43.8            19
+    ## 2 Low8  #100                    20            39.2            20
+    ## 3 Low8  #4/84                   21.8          35.2            20
+    ## 4 Low8  #108                    25.6          47.5            20
+    ## 5 Low8  #99                     23.5          39              20
+    ## 6 Low8  #110                    25.5          42.7            20
+    ## # ℹ 3 more variables: `Pups born alive` <int>, `Pups dead @ birth` <int>,
+    ## #   `Pups survive` <int>
+
+``` r
+litters_df = 
+  read_csv(
+    "data/FAS_litters.csv",
+    col_types = cols(
+      Group = col_factor()
+    )
+  )
+
+head(litters_df)
+```
+
+    ## # A tibble: 6 × 8
+    ##   Group `Litter Number` `GD0 weight` `GD18 weight` `GD of Birth`
+    ##   <fct> <chr>                  <dbl>         <dbl>         <dbl>
+    ## 1 Con7  #85                     19.7          34.7            20
+    ## 2 Con7  #1/2/95/2               27            42              19
+    ## 3 Con7  #5/5/3/83/3-3           26            41.4            19
+    ## 4 Con7  #5/4/2/95/2             28.5          44.1            19
+    ## 5 Con7  #4/2/95/3-3             NA            NA              20
+    ## 6 Con7  #2/2/95/3-2             NA            NA              20
+    ## # ℹ 3 more variables: `Pups born alive` <dbl>, `Pups dead @ birth` <dbl>,
+    ## #   `Pups survive` <dbl>
+
+Practice with pups_csv
+
+``` r
+pups_df = 
+  read_csv(
+    "data/FAS_pups.csv",
+    col_types = cols(
+      Group = col_character(),
+      `Litter Number` = col_character(),
+      `Sex` = col_integer(),
+      `PD ears` = col_double(),
+      `PD eyes` = col_double(),
+      `PD pivot` = col_double(),
+      `PD walk` = col_double()
+    )
+)
+```
+
+    ## Warning: The following named parsers don't match the column names: Group
+
+``` r
+tail(pups_df)
+```
+
+    ## # A tibble: 6 × 6
+    ##   `Litter Number`   Sex `PD ears` `PD eyes` `PD pivot` `PD walk`
+    ##   <chr>           <int>     <dbl>     <dbl>      <dbl>     <dbl>
+    ## 1 #2/95/2             2         4        12          7         9
+    ## 2 #2/95/2             2         3        13          6         8
+    ## 3 #2/95/2             2         3        13          7         9
+    ## 4 #82/4               2         4        13          7         9
+    ## 5 #82/4               2         3        13          7         9
+    ## 6 #82/4               2         3        13          7         9
+
+``` r
+pups_df = 
+  read_csv(
+    "data/FAS_pups.csv",
+    col_types = cols(
+      Group = col_factor()
+    )
+  )
+```
+
+    ## Warning: The following named parsers don't match the column names: Group
+
+``` r
+head(pups_df)
+```
+
+    ## # A tibble: 6 × 6
+    ##   `Litter Number`   Sex `PD ears` `PD eyes` `PD pivot` `PD walk`
+    ##   <chr>           <dbl>     <dbl>     <dbl>      <dbl>     <dbl>
+    ## 1 #85                 1         4        13          7        11
+    ## 2 #85                 1         4        13          7        12
+    ## 3 #1/2/95/2           1         5        13          7         9
+    ## 4 #1/2/95/2           1         5        13          8        10
+    ## 5 #5/5/3/83/3-3       1         5        13          8        10
+    ## 6 #5/5/3/83/3-3       1         5        14          6         9
 
 ## Other file types
 
@@ -240,15 +383,38 @@ Import a xlsx file first.
 
 ``` r
 mlb_df =
-  read_excel("data/mlb11.xlsx")
+  read_excel("data/mlb11.xlsx", n_max = 20)
+
+head(mlb_df, 5)
 ```
+
+    ## # A tibble: 5 × 12
+    ##   team         runs at_bats  hits homeruns bat_avg strikeouts stolen_bases  wins
+    ##   <chr>       <dbl>   <dbl> <dbl>    <dbl>   <dbl>      <dbl>        <dbl> <dbl>
+    ## 1 Texas Rang…   855    5659  1599      210   0.283        930          143    96
+    ## 2 Boston Red…   875    5710  1600      203   0.28        1108          102    90
+    ## 3 Detroit Ti…   787    5563  1540      169   0.277       1143           49    95
+    ## 4 Kansas Cit…   730    5672  1560      129   0.275       1006          153    71
+    ## 5 St. Louis …   762    5532  1513      162   0.273        978           57    90
+    ## # ℹ 3 more variables: new_onbase <dbl>, new_slug <dbl>, new_obs <dbl>
 
 Import a SAS file
 
 ``` r
 pulse_df = 
   read_sas("data/public_pulse_data.sas7bdat")
+
+head(pulse_df, 5)
 ```
+
+    ## # A tibble: 5 × 7
+    ##      ID   age Sex   BDIScore_BL BDIScore_01m BDIScore_06m BDIScore_12m
+    ##   <dbl> <dbl> <chr>       <dbl>        <dbl>        <dbl>        <dbl>
+    ## 1 10003  48.0 male            7            1            2            0
+    ## 2 10015  72.5 male            6           NA           NA           NA
+    ## 3 10022  58.5 male           14            3            8           NA
+    ## 4 10026  72.7 male           20            6           18           16
+    ## 5 10035  60.4 male            4            0            1            2
 
 ## Base R …
 
