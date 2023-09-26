@@ -17,14 +17,18 @@ Let's import the FAS_litters.csv` csv using a relative path.
 
 
 ```{r}
+options(tibble.print_min = 3)
+
 litters_df = 
-  read_csv("data/FAS_litters.csv")
+  read_csv("data/FAS_litters.csv",
+           col_types = "ccddiiii")
 
 litters_df = 
   janitor::clean_names(litters_df)
 
 pups_df = 
-  read_csv("data/FAS_pups.csv")
+  read_csv("data/FAS_pups.csv",
+           col_types = "ciiiii")
 
 pups_df = 
   janitor::clean_names(pups_df)
@@ -71,7 +75,7 @@ pull(litters_df, group)
 If need something to get off from the data frame , use `pull`.
 
 
-pracftice with pups.csv.
+practice with pups.csv.
 
 ```{r}
 select(pups_df, litter_number, sex, pd_ears)
@@ -137,7 +141,7 @@ mutate(
 ## `arrannge`
 
 ```{r}
-arrange(litters_df, gd0_weight)
+head(arrange(litters_df, group, gd0_weight), 10)
 
 arrange(litters_df, group, gd0_weight)
 ```
@@ -157,4 +161,10 @@ litters_df =
   arrange(group, wt_gain)
 ```
 
+
+```{r}
+litters_df |>
+  lm(wt_gain ~ pups_born_alive, data = _) |>
+  broom::tidy()
+```
 
